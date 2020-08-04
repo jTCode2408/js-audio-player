@@ -73,7 +73,7 @@ export default class AudioPlayer{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
                 audioItem.href=audio.url;
-                audioItem.innerHTML= `<i class= "fa fa-play"></i>    ${audio.name}`;
+                audioItem.innerHTML= `<i class= "fa fa-play"></i>    ${audio.name} - ${audio.artist}`;
                 this.setEventListener(audioItem);
                 playlistElm.appendChild(audioItem);
 

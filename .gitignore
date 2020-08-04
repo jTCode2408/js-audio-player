@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+
+#songs
+.mp3
+mp3*

@@ -1,0 +1,43 @@
+@import '../node_modules/@fortawesome/fontawesome-free/css/all.css';
+
+body{
+    color: blue;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+
+
+.audioPlayer {
+    box-shadow: 0 0 32px 4px rgba(0,0,0,0.2);
+    font-family: 'Source Sans Pro', sans-serif;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+canvas {
+      
+        width: 50%;
+        border:2px solid blue;  
+        height: 300px; 
+    }
+
+.playlist{
+ 
+    display:flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-content: center;
+    width: 100%;
+}
+
+a{
+    border:2px solid green;
+ 
+    width:80%;
+}
+
+.play{
+    margin:3%;
+    border:2px solid green;
+}

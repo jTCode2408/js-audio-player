@@ -1,0 +1,23 @@
+{
+  "name": "js-audio-player",
+  "version": "1.0.0",
+  "description": "music player completely with JS",
+  "main": "Player.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jTCode2408/js-audio-player.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jTCode2408/js-audio-player/issues"
+  },
+  "homepage": "https://github.com/jTCode2408/js-audio-player#readme",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0"
+  }
+}

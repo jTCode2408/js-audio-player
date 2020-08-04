@@ -35,14 +35,14 @@ export default class AudioPlayer{
         analyzer.getByteFrequencyData(dataArray);
 
         ctx.fillStyle=" #000";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvas.width, canvas.height); //start from corner, fill entire canvas color #000
 
         for (let i=0; i < bufferLength; i++){
-            barHeight=dataArray[i] -75;
-            const r =barHeight + (25 * (i/bufferLength));
+            barHeight=dataArray[i] -75; //bar height, without -75 will go to top of pagfe
+            const r =barHeight + (25 * (i/bufferLength)); // r is for fill colors
             ctx.fillStyle=`rgb(${r}, 100, 50)`;
-            ctx.fillRect(bar, canvas.height-barHeight, bars,barHeight);
-            bar += bars +2;
+            ctx.fillRect(bar, canvas.height-barHeight, bars,barHeight); //generate bar for canvas, in loop for each
+            bar += bars +2; //padding for bars
 
         }
 
@@ -52,32 +52,136 @@ export default class AudioPlayer{
 
         createPlayerElement(){
             //html5 audio element to control
+        
             this.audioElm=document.createElement('audio');
-            const playlistElm=document.createElement('div');
-            playlistElm.classList.add('playlist');
+            this.audioElm.ontimeupdate=this.updateTime.bind(this);
+            
+            const containerElm=document.createElement('div');
+            containerElm.classList.add('container');
+            
+            this.playlistElm=document.createElement('div');
+            this.playlistElm.classList.add('playlist');
+            
             const playElm =document.createElement('button');
             playElm.classList.add('play')
             playElm.innerHTML= '<i class= "fa fa-play"></i>';
+            
             this.visualiserElm=document.createElement('canvas');
-            this.playerElm.appendChild(this.audioElm);
-            this.playerElm.appendChild(playlistElm);
-            this.playerElm.appendChild(this.visualiserElm);
 
-            this.createPlaylistElm(playlistElm);
+            const progressBarElm=document.createElement('div');
+            progressBarElm.classList.add('progressBar');
+
+            containerElm.appendChild(this.audioElm);
+            containerElm.appendChild(this.playlistElm);
+            containerElm.appendChild(this.visualiserElm);
+
+            this.playerElm.appendChild(containerElm)
+            this.playerElm.appendChild(progressBarElm);
+            
+            this.createPlaylistElm(this.playlistElm);
+            this.createProgressBarElm(progressBarElm);
         }
+
+            createProgressBarElm(progressBarElm){
+                const container =document.createElement('div');
+                container.classList.add('container');
+
+                const previousBtn=document.createElement('button');
+                const nextBtn=document.createElement('button');
+
+                nextBtn.innerHTML= `<i class="fas fa-forward"></i>`;
+                previousBtn.innerHTML=`<i class="fas fa-backward"> </i>`;
+                nextBtn.addEventListener('click', this.playNext.bind(this));
+                previousBtn.addEventListener('click', this.playPrev.bind(this));
+            
+                this.progressBar=document.createElement('canvas');
+                this.progressBar.addEventListener('click', (e)=>{
+                    const progressBarWidth=parseInt(window.getComputedStyle(this.progressBar).width);
+
+                    const amountComplete=((e.clientX - this.progressBar.getBoundingClientRect().left) / progressBarWidth);
+                    this.audioElm.currentTime=(this.audioElm.duration || 0) * amountComplete;
+                });
+
+                this.timer=document.createElement('div');
+                this.timer.classList.add('timer');
+
+                container.appendChild(previousBtn);
+                container.appendChild(this.timer);
+                container.appendChild(nextBtn);
+
+                progressBarElm.appendChild(container);
+                progressBarElm.appendChild(this.progressBar);
+            }
+        
+            updateCurrentAudio(nextAudio){ //updates curent audio playing
+                if(!this.audioContext){
+                    this.createVisualiser();
+                }
+                this.setPlayIcon(this.currentAudio);
+                this.currentAudio=nextAudio;
+                this.setPauseIcon(this.currentAudio);
+                this.audioElm.src=this.currentAudio.getAttribute('href');
+                this.audioElm.play();
+            }
+
+            playNext(){
+                const index=this.audioElm.findIndex(
+                    audioItem=>audioItem.getAttribute('href')=== this.currentAudio.getAttribute('href')
+                    );
+                    const nextAudio = index >= this.audioElm.length -1 ? this.audioElm[0] : this.audioElm[index+1];
+                    this.updateCurrentAudio(nextAudio);
+                }
+                playPrev(){
+                    const index = this.audioElm.findIndex(
+                        audioItem=>audioItem.getAttribute('href')=== this.currentAudio.getAttribute('href')
+                        );
+                        const nextAudio = index <= 0 ? this.audioElm[this.audioElm.length -1] : this.audioElm[index-1];
+                        this.updateCurrentAudio(nextAudio)
+                }
+
+
+                updateTime(){
+                    const parseTime=time=>{
+                        //take time as seconds and return as min/sec
+                        const seconds=String(Math.floor(time % 60) || 0).padStart('2', '0');
+                        const minutes=String(Math.floor(time/60)   || 0).padStart('2', '0');
+
+                        return `${minutes}: ${seconds}`;
+                    };
+
+                    const {currentTime, duration}= this.audioElm;
+                    this.timer.innerHTML =`${parseTime(currentTime)} / ${parseTime(duration)}`;
+
+                    this.updateProgressBar();
+                }
+
+                updateProgressBar(){
+                const progressSize=(current, overall, width)=>(current/overall) * width;
+                const {currentTime, duration} =this.audioElm;
+                const progressCtx=this.progressBar.getContext('2d');
+                progressCtx.fillStyle= '#000';
+                progressCtx.fillRect(0,0, this.progressBar.width, this.progressBar.height);
+
+                progressCtx.fillStyle='#65ac6b';
+                progressCtx.fillRect(0,0, progressSize(currentTime, duration, this.progressBar.width), this.progressBar.height)
+                }
+
 
         createPlaylistElm(playlistElm){
             //for each file passed into playlist, create playlist entry
             //audio files saved in audio obj, loop through and create new item, anchor tag used so that if page doesnt run js it will link to html5 audio player and play there
-            this.audio.forEach(audio=> {
+            this.audioElm= this.audio.map(audio=>{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
                 audioItem.href=audio.url;
                 audioItem.innerHTML= `<i class= "fa fa-play"></i>    ${audio.name} - ${audio.artist}`;
                 this.setEventListener(audioItem);
                 playlistElm.appendChild(audioItem);
+                return audioItem
 
             });
+
+            this.currentAudio=this.audioElm[0];
         }
 
         setEventListener(audioItem){
@@ -86,7 +190,7 @@ export default class AudioPlayer{
                     if (!this.audioContext){
                         this.createVisualiser();
                     }
-                    const isCurrentAudio=audioItem.getAttribute('href')== (this.currentAudio && this.currentAudio.getAttribute('href')) //true/false if clicked is the same as playing audio(unless null)
+                    const isCurrentAudio = audioItem.getAttribute('href') == (this.currentAudio && this.currentAudio.getAttribute('href')); //true/false if clicked is the same as playing audio(unless null)
 
                     if (isCurrentAudio && !this.audioElm.paused){
                     this.setPlayIcon(this.currentAudio);
@@ -100,7 +204,7 @@ export default class AudioPlayer{
                         }
                         this.currentAudio=audioItem;
                         this.setPauseIcon(this.currentAudio)
-                        this.audioElm.src=this.currentAudio.getAttribute('href')
+                        this.audioElm.src=this.currentAudio.getAttribute('href');
                         this.audioElm.play();
                     }
 
@@ -108,18 +212,18 @@ export default class AudioPlayer{
             }
 
 
-        setPlayIcon(elem){
-            const icon=elem.querySelector('i');
-            icon.classList.add('fa-play');
-            icon.classList.remove('fa-pause');
-           
-            }
-
+            
         setPauseIcon(elem){
             const icon=elem.querySelector('i');
             icon.classList.add('fa-puase');
             icon.classList.remove('fa-play');
-            
             }
 
+        setPlayIcon(elem){
+            const icon=elem.querySelector('i');
+            icon.classList.remove('fa-pause');
+            icon.classList.add('fa-play');
+           
+           
+            }
     }

@@ -1,6 +1,9 @@
 # JS-Audio-Player
 A mp3 audio player made with JavaScript. Made to practice JS skills.
 
+## Deployed At: 
+https://js-music-app.netlify.app/
+
 
 *Containing mp3 files, vanilla JS code, audio visualizations*
 

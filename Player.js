@@ -17,14 +17,14 @@ export default class AudioPlayer{
         this.audioContext = new AudioContext();
         this.src = this.audioContext.createMediaElementSource(this.audioElm);
         const analyzer= this.audioContext.createAnalyser();
-        const canvas = this.visualiserElm;
-        const ctx=canvas.getContext('2d');
+        const canvas = this.progressViz;
+        const audioCtx=canvas.getContext('2d');
         this.src.connect(analyzer);
         analyzer.connect(this.audioContext.destination);
         analyzer.fftSize=128;
         const bufferLength=analyzer.frequencyBinCount;
         const dataArray= new Uint8Array(bufferLength);
-        const barW=(canvas.width / bufferLength) * 2.5;
+        const barsWidth=(canvas.width / bufferLength) * 2.5;
         let barHeight;
         let bar;
     
@@ -34,15 +34,15 @@ export default class AudioPlayer{
         bar=0;
         analyzer.getByteFrequencyData(dataArray);
 
-        ctx.fillStyle=" #000";
-        ctx.fillRect(0, 0, canvas.width, canvas.height); //start from corner, fill entire canvas color #000
+        audioCtx.fillStyle="#000";
+        audioCtx.fillRect(0, 0, canvas.width, canvas.height); 
 
         for (let i=0; i < bufferLength; i++){
-            barHeight=dataArray[i] -90; //bar height, without -75 will go to top of pagfe
-            const color =barHeight + (25 * (i/bufferLength)); // r is for fill colors
-            ctx.fillStyle=`rgb(${color}, 0,200, 105)`;
-            ctx.fillRect(bar, canvas.height-barHeight, barW,barHeight); //generate bar for canvas, in loop for each
-            bar += barW +2; //padding for bars
+            barHeight=dataArray[i] -90; //bar height
+            const color =barHeight + (25 * (i/bufferLength)); 
+            audioCtx.fillStyle=`rgb(${color}, 0,200, 105)`;
+            audioCtx.fillRect(bar, canvas.height-barHeight, barsWidth,barHeight); 
+            bar += barsWidth +2; //padding for bars
 
         }
 
@@ -56,67 +56,67 @@ export default class AudioPlayer{
             this.audioElm.addEventListener('ended', this.playNext.bind(this));
             this.audioElm.ontimeupdate=this.updateTime.bind(this);
             
-            const containerElm=document.createElement('div');
-            containerElm.classList.add('container');
+            const playerCont=document.createElement('div');
+            playerCont.classList.add('container');
             
             this.playlistElm=document.createElement('div');
             this.playlistElm.classList.add('playlist');
             
-            const playElm =document.createElement('button');
-            playElm.classList.add('play');
-            playElm.innerHTML= '<i class="fa fa-play"></i>';
+            const playButton =document.createElement('button');
+            playButton.classList.add('play');
+            playButton.innerHTML= '<i class="fa fa-play"></i>';
             
-            this.visualiserElm=document.createElement('canvas');
+            this.progressViz=document.createElement('canvas');
 
-            const progressBarElm=document.createElement('div');
-            progressBarElm.classList.add('progressBar');
+            const progressBarDiv=document.createElement('div');
+            progressBarDiv.classList.add('progressBar');
 
-            containerElm.appendChild(this.audioElm);
-            containerElm.appendChild(this.playlistElm);
-            containerElm.appendChild(this.visualiserElm);
+            playerCont.appendChild(this.audioElm);
+            playerCont.appendChild(this.playlistElm);
+            playerCont.appendChild(this.progressViz);
            
-            this.playerElm.appendChild(containerElm);
-            this.playerElm.appendChild(progressBarElm); 
+            this.playerElm.appendChild(playerCont);
+            this.playerElm.appendChild(progressBarDiv); 
                
             
             this.createPlaylistElm(this.playlistElm);
-            this.createProgressBarElm(progressBarElm);
+            this.createProgressBarElm(progressBarDiv);
         }
 
-            createProgressBarElm(progressBarElm){
-                const container =document.createElement('div');
-                container.classList.add('container');
+            createProgressBarElm(progressBarDiv){
+                const progressCont =document.createElement('div');
+                progressCont.classList.add('container');
 
-                const previousBtn=document.createElement('button');
+                const backBtn=document.createElement('button');
                 const nextBtn=document.createElement('button');
 
                 nextBtn.innerHTML= `<i class="fas fa-forward"></i>`;
-                previousBtn.innerHTML=`<i class="fas fa-backward"> </i>`;
-                previousBtn.addEventListener('click', this.playPrev.bind(this));
+                backBtn.innerHTML=`<i class="fas fa-backward"> </i>`;
+                backBtn.addEventListener('click', this.playPrev.bind(this));
                 nextBtn.addEventListener('click', this.playNext.bind(this));
                 
             
-                this.progressBar=document.createElement('canvas');
-                this.progressBar.addEventListener('click', (e)=>{
-                    const progressBarWidth=parseInt(window.getComputedStyle(this.progressBar).width);
+                this.progressBarCanvas=document.createElement('canvas');
+                this.progressBarCanvas.addEventListener('click', (e)=>{
+                    const progressBarWidth=parseInt(window.getComputedStyle(this.progressBarCanvas).width);
 
-                    const amountComplete=((e.clientX - this.progressBar.getBoundingClientRect().left) / progressBarWidth);
+                    const amountComplete=((e.clientX - this.progressBarCanvas.getBoundingClientRect().left) / progressBarWidth);
                     this.audioElm.currentTime=(this.audioElm.duration || 0) * amountComplete;
                 });
 
                 this.timer=document.createElement('div');
                 this.timer.classList.add('timer');
-                container.appendChild(this.timer);
-                container.appendChild(previousBtn);
+                progressCont.appendChild(this.timer);
+                progressCont.appendChild(backBtn);
                 
-                container.appendChild(this.progressBar);
-                container.appendChild(nextBtn);
+                progressCont.appendChild(this.progressBarCanvas);
+                progressCont.appendChild(nextBtn);
                 
-                progressBarElm.appendChild(container);
+                progressBarDiv.appendChild(progressCont);
                 
             }
         
-            updateCurrentAudio(nextAudio){ //updates curent audio playing
+            updateCurrentAudio(nextAudio){ 
                 if(!this.audioContext){
                     this.createVisualiser();
                 }
@@ -142,7 +142,6 @@ export default class AudioPlayer{
                         this.updateCurrentAudio(nextAudio)
                 }
 
-
                 updateTime(){
 
                     const {currentTime, duration}= this.audioElm;
@@ -152,12 +151,12 @@ export default class AudioPlayer{
                 updateProgressBar(){
                 const progressSize=(current, overall, width)=>(current/overall) * width;
                 const {currentTime, duration} =this.audioElm;
-                const progressCtx=this.progressBar.getContext('2d');
+                const progressCtx=this.progressBarCanvas.getContext('2d');
                 progressCtx.fillStyle= '#000';
-                progressCtx.fillRect(0,0, this.progressBar.width, this.progressBar.height);
+                progressCtx.fillRect(0,0, this.progressBarCanvas.width, this.progressBarCanvas.height);
 
                 progressCtx.fillStyle='#a6E1fa';
-                progressCtx.fillRect(0,0, progressSize(currentTime, duration, this.progressBar.width), this.progressBar.height)
+                progressCtx.fillRect(0,0, progressSize(currentTime, duration, this.progressBarCanvas.width), this.progressBarCanvas.height)
                 }
 
 
@@ -166,7 +165,7 @@ export default class AudioPlayer{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
                 audioItem.href=audio.url;
-                audioItem.innerHTML= `<i class="fa fa-play"></i>   ${audio.name} - ${audio.artist}`;
+                audioItem.innerHTML= `<i class="fa fa-play"></i>   ${audio.name} (${audio.artist})`;
                 this.setEventListener(audioItem);
                 playlistElm.appendChild(audioItem);
                 return audioItem
@@ -204,20 +203,17 @@ export default class AudioPlayer{
             }
 
 
-            
         setPauseIcon(elem){
             const icon=elem.querySelector("i");
             icon.classList.remove("fa-play");
             icon.classList.add("fa-puase");
            
-            
             }
 
         setPlayIcon(elem){
             const icon=elem.querySelector("i");
             icon.classList.remove("fa-pause");
             icon.classList.add("fa-play");
-           
            
             }
     }

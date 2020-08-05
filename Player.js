@@ -14,17 +14,17 @@ export default class AudioPlayer{
     }
 
     createVisualiser(){
-        this.audioContext=new AudioContext();
-        this.src=this.audioContext.createMediaElementSource(this.audioElm);
-        const analyzer= this.audioContext.createAnalyser()
+        this.audioContext = new AudioContext();
+        this.src = this.audioContext.createMediaElementSource(this.audioElm);
+        const analyzer= this.audioContext.createAnalyser();
         const canvas = this.visualiserElm;
         const ctx=canvas.getContext('2d');
-        this.src.connect(analyzer)
+        this.src.connect(analyzer);
         analyzer.connect(this.audioContext.destination);
         analyzer.fftSize=128;
         const bufferLength=analyzer.frequencyBinCount;
-        const dataArray=new Uint8Array(bufferLength);
-        const bars=(canvas.width / bufferLength) * 2.5;
+        const dataArray= new Uint8Array(bufferLength);
+        const barW=(canvas.width / bufferLength) * 2.5;
         let barHeight;
         let bar;
     
@@ -41,19 +41,19 @@ export default class AudioPlayer{
             barHeight=dataArray[i] -75; //bar height, without -75 will go to top of pagfe
             const r =barHeight + (25 * (i/bufferLength)); // r is for fill colors
             ctx.fillStyle=`rgb(${r}, 100, 50)`;
-            ctx.fillRect(bar, canvas.height-barHeight, bars,barHeight); //generate bar for canvas, in loop for each
-            bar += bars +2; //padding for bars
+            ctx.fillRect(bar, canvas.height-barHeight, barW,barHeight); //generate bar for canvas, in loop for each
+            bar += barW +2; //padding for bars
 
         }
 
     }
-    renderFrame()
+    renderFrame();
 }
 
         createPlayerElement(){
             //html5 audio element to control
-        
             this.audioElm=document.createElement('audio');
+            this.audioElm.addEventListener('ended', this.playNext.bind(this));
             this.audioElm.ontimeupdate=this.updateTime.bind(this);
             
             const containerElm=document.createElement('div');
@@ -63,7 +63,7 @@ export default class AudioPlayer{
             this.playlistElm.classList.add('playlist');
             
             const playElm =document.createElement('button');
-            playElm.classList.add('play')
+            playElm.classList.add('play');
             playElm.innerHTML= '<i class= "fa fa-play"></i>';
             
             this.visualiserElm=document.createElement('canvas');
@@ -75,7 +75,7 @@ export default class AudioPlayer{
             containerElm.appendChild(this.playlistElm);
             containerElm.appendChild(this.visualiserElm);
 
-            this.playerElm.appendChild(containerElm)
+            this.playerElm.appendChild(containerElm);
             this.playerElm.appendChild(progressBarElm);
             
             this.createPlaylistElm(this.playlistElm);
@@ -91,8 +91,9 @@ export default class AudioPlayer{
 
                 nextBtn.innerHTML= `<i class="fas fa-forward"></i>`;
                 previousBtn.innerHTML=`<i class="fas fa-backward"> </i>`;
-                nextBtn.addEventListener('click', this.playNext.bind(this));
                 previousBtn.addEventListener('click', this.playPrev.bind(this));
+                nextBtn.addEventListener('click', this.playNext.bind(this));
+                
             
                 this.progressBar=document.createElement('canvas');
                 this.progressBar.addEventListener('click', (e)=>{
@@ -125,17 +126,17 @@ export default class AudioPlayer{
             }
 
             playNext(){
-                const index=this.audioElm.findIndex(
+                const index=this.songs.findIndex(
                     audioItem=>audioItem.getAttribute('href')=== this.currentAudio.getAttribute('href')
                     );
-                    const nextAudio = index >= this.audioElm.length -1 ? this.audioElm[0] : this.audioElm[index+1];
+                    const nextAudio = index >= this.songs.length -1 ? this.songs[0] : this.songs[index+1];
                     this.updateCurrentAudio(nextAudio);
                 }
                 playPrev(){
-                    const index = this.audioElm.findIndex(
+                    const index = this.songs.findIndex(
                         audioItem=>audioItem.getAttribute('href')=== this.currentAudio.getAttribute('href')
                         );
-                        const nextAudio = index <= 0 ? this.audioElm[this.audioElm.length -1] : this.audioElm[index-1];
+                        const nextAudio = index <= 0 ? this.songs[this.songs.length -1] : this.songs[index-1];
                         this.updateCurrentAudio(nextAudio)
                 }
 
@@ -170,7 +171,8 @@ export default class AudioPlayer{
         createPlaylistElm(playlistElm){
             //for each file passed into playlist, create playlist entry
             //audio files saved in audio obj, loop through and create new item, anchor tag used so that if page doesnt run js it will link to html5 audio player and play there
-            this.audioElm= this.audio.map(audio=>{
+         //BUG HERE. AUDIO ELEMNTS< RENAME TO BE NEW ARR. LOOK AT 148 IN SRC CODE. Change instances of audioElms where it should be audioElements new arr//
+            this.songs= this.audio.map(audio=>{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
                 audioItem.href=audio.url;
@@ -181,7 +183,7 @@ export default class AudioPlayer{
 
             });
 
-            this.currentAudio=this.audioElm[0];
+            this.currentAudio=this.songs[0];
         }
 
         setEventListener(audioItem){

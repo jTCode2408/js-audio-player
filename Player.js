@@ -38,9 +38,9 @@ export default class AudioPlayer{
         ctx.fillRect(0, 0, canvas.width, canvas.height); //start from corner, fill entire canvas color #000
 
         for (let i=0; i < bufferLength; i++){
-            barHeight=dataArray[i] -75; //bar height, without -75 will go to top of pagfe
-            const r =barHeight + (25 * (i/bufferLength)); // r is for fill colors
-            ctx.fillStyle=`rgb(${r}, 100, 50)`;
+            barHeight=dataArray[i] -90; //bar height, without -75 will go to top of pagfe
+            const color =barHeight + (25 * (i/bufferLength)); // r is for fill colors
+            ctx.fillStyle=`rgb(${color}, 0,200, 105)`;
             ctx.fillRect(bar, canvas.height-barHeight, barW,barHeight); //generate bar for canvas, in loop for each
             bar += barW +2; //padding for bars
 
@@ -74,9 +74,10 @@ export default class AudioPlayer{
             containerElm.appendChild(this.audioElm);
             containerElm.appendChild(this.playlistElm);
             containerElm.appendChild(this.visualiserElm);
-            containerElm.appendChild(progressBarElm);
+           
             this.playerElm.appendChild(containerElm);
-     
+            this.playerElm.appendChild(progressBarElm); 
+               
             
             this.createPlaylistElm(this.playlistElm);
             this.createProgressBarElm(progressBarElm);
@@ -105,13 +106,14 @@ export default class AudioPlayer{
 
                 this.timer=document.createElement('div');
                 this.timer.classList.add('timer');
-
-                container.appendChild(previousBtn);
                 container.appendChild(this.timer);
+                container.appendChild(previousBtn);
+                
+                container.appendChild(this.progressBar);
                 container.appendChild(nextBtn);
-
+                
                 progressBarElm.appendChild(container);
-                progressBarElm.appendChild(this.progressBar);
+                
             }
         
             updateCurrentAudio(nextAudio){ //updates curent audio playing
@@ -142,17 +144,8 @@ export default class AudioPlayer{
 
 
                 updateTime(){
-                    const parseTime=time=>{
-                        //take time as seconds and return as min/sec
-                        const seconds=String(Math.floor(time % 60) || 0).padStart('2', '0');
-                        const minutes=String(Math.floor(time/60)   || 0).padStart('2', '0');
-
-                        return `${minutes}: ${seconds}`;
-                    };
 
                     const {currentTime, duration}= this.audioElm;
-                    this.timer.innerHTML =`${parseTime(currentTime)} / ${parseTime(duration)}`;
-
                     this.updateProgressBar();
                 }
 
@@ -163,15 +156,12 @@ export default class AudioPlayer{
                 progressCtx.fillStyle= '#000';
                 progressCtx.fillRect(0,0, this.progressBar.width, this.progressBar.height);
 
-                progressCtx.fillStyle='#65ac6b';
+                progressCtx.fillStyle='#a6E1fa';
                 progressCtx.fillRect(0,0, progressSize(currentTime, duration, this.progressBar.width), this.progressBar.height)
                 }
 
 
         createPlaylistElm(playlistElm){
-            //for each file passed into playlist, create playlist entry
-            //audio files saved in audio obj, loop through and create new item, anchor tag used so that if page doesnt run js it will link to html5 audio player and play there
-         //BUG HERE. AUDIO ELEMNTS< RENAME TO BE NEW ARR. LOOK AT 148 IN SRC CODE. Change instances of audioElms where it should be audioElements new arr//
             this.songs= this.audio.map(audio=>{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
@@ -217,8 +207,10 @@ export default class AudioPlayer{
             
         setPauseIcon(elem){
             const icon=elem.querySelector("i");
-            icon.classList.add("fa-puase");
             icon.classList.remove("fa-play");
+            icon.classList.add("fa-puase");
+           
+            
             }
 
         setPlayIcon(elem){

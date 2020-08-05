@@ -12,10 +12,9 @@ non photo blue(light)- a6E1fa
     box-sizing: border-box;
 }
 body{
-   
-    max-width: 100%;
+
     /* border:2px solid orange; */
-    margin:2rem;
+  
     margin-bottom: 0;
 }
 
@@ -72,7 +71,6 @@ span{
     align-content: center;
     flex-direction: column;
     border: 4px solid #0A2472;
-    width:100%;
     
 }
 
@@ -130,5 +128,7 @@ i:hover{
 footer{
     color:#001c55;
     font-size: .75rem;
+    margin-bottom: 2%;
+    margin-top: 1%;
 
 }

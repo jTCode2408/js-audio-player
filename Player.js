@@ -64,7 +64,7 @@ export default class AudioPlayer{
             
             const playElm =document.createElement('button');
             playElm.classList.add('play');
-            playElm.innerHTML= '<i class= "fa fa-play"></i>';
+            playElm.innerHTML= '<i class="fa fa-play"></i>';
             
             this.visualiserElm=document.createElement('canvas');
 
@@ -74,9 +74,9 @@ export default class AudioPlayer{
             containerElm.appendChild(this.audioElm);
             containerElm.appendChild(this.playlistElm);
             containerElm.appendChild(this.visualiserElm);
-
+            containerElm.appendChild(progressBarElm);
             this.playerElm.appendChild(containerElm);
-            this.playerElm.appendChild(progressBarElm);
+     
             
             this.createPlaylistElm(this.playlistElm);
             this.createProgressBarElm(progressBarElm);
@@ -176,7 +176,7 @@ export default class AudioPlayer{
                 const audioItem=document.createElement('a');
                 //each item gets url & name props & event listener
                 audioItem.href=audio.url;
-                audioItem.innerHTML= `<i class= "fa fa-play"></i>    ${audio.name} - ${audio.artist}`;
+                audioItem.innerHTML= `<i class="fa fa-play"></i>   ${audio.name} - ${audio.artist}`;
                 this.setEventListener(audioItem);
                 playlistElm.appendChild(audioItem);
                 return audioItem
@@ -216,15 +216,15 @@ export default class AudioPlayer{
 
             
         setPauseIcon(elem){
-            const icon=elem.querySelector('i');
-            icon.classList.add('fa-puase');
-            icon.classList.remove('fa-play');
+            const icon=elem.querySelector("i");
+            icon.classList.add("fa-puase");
+            icon.classList.remove("fa-play");
             }
 
         setPlayIcon(elem){
-            const icon=elem.querySelector('i');
-            icon.classList.remove('fa-pause');
-            icon.classList.add('fa-play');
+            const icon=elem.querySelector("i");
+            icon.classList.remove("fa-pause");
+            icon.classList.add("fa-play");
            
            
             }

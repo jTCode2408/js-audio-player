@@ -5,7 +5,7 @@ const player = new AudioPlayer('.audioPlayer', [
    {url: 'songs/12 Latch (Acoustic).mp3', name: 'Latch', artist: 'Sam Smith'},
    {url: 'songs/15 Sunday Candy.mp3', name: 'Sunday Candy', artist: 'Donnie Trumpet feat. Chance The Rapper'},
    {url: 'songs/02 Brand New (Duet with Justin Timbe.mp3', name: 'Brand New', artist: 'Pharrell feat. Justin Timberlake'},
-   {url: 'songs/02 Im a Mess.mp3', name: 'Im a Mess', artist: 'Ed Sheeran'},
+   {url: 'songs/02 I\'m a Mess.mp3', name: 'I\'m a Mess', artist: 'Ed Sheeran'},
    {url: 'songs/02 Send My Love (To Your New Lover).mp3', name: 'Send My Love( To Your New Lover)', artist: 'Adele'},
    {url: 'songs/03 Collard Greens (feat. Kendrick La.mp3', name: 'Collard Greens', artist: 'Schoolyboy Q feat. Kendrick Lamar'},
    {url: 'songs/03 I Miss You.mp3', name: 'I Miss You', artist:'Adele'},
@@ -23,7 +23,7 @@ const player = new AudioPlayer('.audioPlayer', [
    {url: 'songs/08 Lost Queen.mp3', name: 'Lost Queen', artist: 'Pharrell'},
    {url: 'songs/08 Love in the Dark.mp3', name: 'Love In The Dark', artist: 'Adele'},
    {url: 'songs/09 Know Who You Are (Duet with Alici.mp3', name: 'Know Who You Are', artist:'Pharrell feat. Alicia Keys'},
-   {url: 'songs/10 Hell of a Night.mp3', name: 'Hell Of A Night'},
+   {url: 'songs/10 Hell of a Night.mp3', name: 'Hell Of A Night', artist: 'Schoolboy Q'},
    {url: 'songs/11 Thinking Out Loud.mp3', name: 'Thinking Out Loud', artist:'Ed Sheeran'},
    {url: 'songs/12 Afire Love.mp3', name :'Afire Love', artist: 'Ed Sheeran'},
 

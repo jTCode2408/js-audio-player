@@ -138,3 +138,7 @@ button{
     height: 20.2px;
     font-weight: bolder;
 }
+
+.playing{
+    color:red;
+}

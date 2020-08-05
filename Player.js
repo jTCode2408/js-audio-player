@@ -90,8 +90,8 @@ export default class AudioPlayer{
                 const backBtn=document.createElement('button');
                 const nextBtn=document.createElement('button');
 
-                nextBtn.innerHTML= `<i class="fas fa-forward"></i>`;
-                backBtn.innerHTML=`<i class="fas fa-backward"> </i>`;
+                nextBtn.innerHTML= `>>`;
+                backBtn.innerHTML=`<<`;
                 backBtn.addEventListener('click', this.playPrev.bind(this));
                 nextBtn.addEventListener('click', this.playNext.bind(this));
                 

@@ -184,36 +184,20 @@ export default class AudioPlayer{
                     const isCurrentAudio = audioItem.getAttribute('href') == (this.currentAudio && this.currentAudio.getAttribute('href')); //true/false if clicked is the same as playing audio(unless null)
 
                     if (isCurrentAudio && !this.audioElm.paused){
-                    this.setPlayIcon(this.currentAudio);
+                 
                     this.audioElm.pause();
                     }else if (isCurrentAudio && this.audioElm.paused){
-                        this.setPauseIcon(this.currentAudio);
+                       
                         this.audioElm.play();
                     } else{
-                        if(this.currentAudio){
-                            this.setPlayIcon(this.currentAudio)
-                        }
+                    
                         this.currentAudio=audioItem;
-                        this.setPauseIcon(this.currentAudio)
+                     
                         this.audioElm.src=this.currentAudio.getAttribute('href');
                         this.audioElm.play();
                     }
 
                 })
             }
-
-
-        setPauseIcon(elem){
-            const icon=elem.querySelector("i");
-            icon.classList.remove("fa-play");
-            icon.classList.add("fa-puase");
-           
-            }
-
-        setPlayIcon(elem){
-            const icon=elem.querySelector("i");
-            icon.classList.remove("fa-pause");
-            icon.classList.add("fa-play");
-           
-            }
+   
     }

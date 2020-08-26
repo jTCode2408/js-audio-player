@@ -1,7 +1,7 @@
 # JS-Audio-Player :headphones:
 A mp3 audio player made with JavaScript. Made to practice vanilla JS skills.
 
-
+<img src="audio-SS.png" alt="app screenshot">
 
 ## Deployed At: 
 https://js-music-app.netlify.app/
